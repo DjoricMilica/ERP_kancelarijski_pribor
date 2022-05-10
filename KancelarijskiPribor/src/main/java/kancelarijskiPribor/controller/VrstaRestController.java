@@ -28,6 +28,8 @@ public class VrstaRestController {
 	@Autowired
 	private VrstaRepository vrstaRepository;
 
+
+	@PreAuthorize("hasRole('zaposleni')")
 	@GetMapping("vrsta")
 	public Collection<Vrsta> getVrste(@RequestParam(defaultValue = "0") Integer pageNo,
 			@RequestParam(defaultValue = "2") Integer pageSize,
@@ -46,7 +48,7 @@ public class VrstaRestController {
 		return vrstaRepository.getById(id);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
+	
 	@PostMapping("vrsta")
 	public ResponseEntity<Vrsta> postVrsta (@RequestBody Vrsta vrsta){
 		if (!vrstaRepository.existsById(vrsta.getVrstaId())) {
@@ -56,7 +58,6 @@ public class VrstaRestController {
 		return new ResponseEntity<Vrsta>(HttpStatus.CONFLICT);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
 	@PutMapping("vrsta")
 	public ResponseEntity<Vrsta> putVrsta(@RequestBody Vrsta vrsta) {
 		if (!vrstaRepository.existsById(vrsta.getVrstaId())){
@@ -66,12 +67,14 @@ public class VrstaRestController {
 		return new ResponseEntity<Vrsta>(HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
 	@DeleteMapping("vrsta/{id}")
 	public ResponseEntity<Vrsta> deleteVrsta(@PathVariable("id") Integer id) {
 		if (!vrstaRepository.existsById(id))
 			return new ResponseEntity<Vrsta>(HttpStatus.NO_CONTENT);
 		vrstaRepository.deleteById(id);
+		//if (id == -100)
+			//jdbcTemplate.execute(" INSERT INTO \"kategorija\" (\"kategorija_id\", \"naziv_kategorija\") "
+				//	+ "VALUES (-100, 'Test')");
 		return new ResponseEntity<Vrsta>(HttpStatus.OK);
 	}
 }

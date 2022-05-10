@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,11 +22,9 @@ import kancelarijskiPribor.repository.PoruceniProizvodRepository;
 
 @RestController
 public class PoruceniProizvodRestController {
-	
 	@Autowired
 	private PoruceniProizvodRepository poruceniProizvodRepository;
 
-	@PreAuthorize("hasAnyRole('kupac','zaposleni')")
 	@GetMapping("poruceniProizvod")
 	public Collection<PoruceniProizvod> getPoruceniProizvod(@RequestParam(defaultValue = "0") Integer pageNo,
 			@RequestParam(defaultValue = "2") Integer pageSize,
@@ -41,13 +38,11 @@ public class PoruceniProizvodRestController {
 		}
 	}	
 	
-	@PreAuthorize("hasAnyRole('kupac','zaposleni')")
 	@GetMapping("poruceniProizvod/{id}")
 	public PoruceniProizvod getPoruceniProizvod(@PathVariable("id") Integer id) {
 		return poruceniProizvodRepository.getById(id);
 	}
 	
-	@PreAuthorize("hasRole('kupac')")
 	@PostMapping("poruceniProizvod")
 	public ResponseEntity<PoruceniProizvod> postPoruceniProizvod (@RequestBody PoruceniProizvod poruceniProizvod){
 		if (!poruceniProizvodRepository.existsById(poruceniProizvod.getPoruceniProizvodId())){
@@ -57,7 +52,6 @@ public class PoruceniProizvodRestController {
 		return new ResponseEntity<PoruceniProizvod>(HttpStatus.CONFLICT);
 	}
 	
-	@PreAuthorize("hasRole('kupac')")
 	@PutMapping("poruceniProizvod")
 	public ResponseEntity<PoruceniProizvod> putPoruceniProizvod(@RequestBody PoruceniProizvod poruceniProizvod) {
 		if (!poruceniProizvodRepository.existsById(poruceniProizvod.getPoruceniProizvodId())){
@@ -67,12 +61,14 @@ public class PoruceniProizvodRestController {
 		return new ResponseEntity<PoruceniProizvod>(HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('kupac')")
 	@DeleteMapping("poruceniProizvod/{id}")
 	public ResponseEntity<PoruceniProizvod> deletePoruceniProizvod(@PathVariable("id") Integer id) {
 		if (!poruceniProizvodRepository.existsById(id))
 			return new ResponseEntity<PoruceniProizvod>(HttpStatus.NO_CONTENT);
 		poruceniProizvodRepository.deleteById(id);
+		//if (id == -100)
+			//jdbcTemplate.execute(" INSERT INTO \"kategorija\" (\"kategorija_id\", \"naziv_kategorija\") "
+				//	+ "VALUES (-100, 'Test')");
 		return new ResponseEntity<PoruceniProizvod>(HttpStatus.OK);
 	}
 }

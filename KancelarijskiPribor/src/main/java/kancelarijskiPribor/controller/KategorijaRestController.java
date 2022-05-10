@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +31,7 @@ public class KategorijaRestController {
 	@Autowired
 	private KategorijaRepository kategorijaRepository;
 
+	@PreAuthorize("hasRole('kupac')")
 	@GetMapping("/kategorija")
 	public Collection<Kategorija> getKategorije(@RequestParam(defaultValue = "0") Integer pageNo,
 			@RequestParam(defaultValue = "2") Integer pageSize,
@@ -50,7 +50,6 @@ public class KategorijaRestController {
 		return kategorijaRepository.getById(id);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
 	@PostMapping("kategorija")
 	public ResponseEntity<Kategorija> postKategorija (@RequestBody Kategorija kategorija){
 		if (!kategorijaRepository.existsById(kategorija.getKategorijaId())) {
@@ -60,7 +59,6 @@ public class KategorijaRestController {
 		return new ResponseEntity<Kategorija>(HttpStatus.CONFLICT);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
 	@PutMapping("kategorija")
 	public ResponseEntity<Kategorija> putKategorija(@RequestBody Kategorija kategorija) {
 		if (!kategorijaRepository.existsById(kategorija.getKategorijaId())){
@@ -70,12 +68,14 @@ public class KategorijaRestController {
 		return new ResponseEntity<Kategorija>(HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasRole('zaposleni')")
 	@DeleteMapping("kategorija/{id}")
 	public ResponseEntity<Kategorija> deleteKategorija(@PathVariable("id") Integer id) {
 		if (!kategorijaRepository.existsById(id))
 			return new ResponseEntity<Kategorija>(HttpStatus.NO_CONTENT);
 		kategorijaRepository.deleteById(id);
+		//if (id == -100)
+			//jdbcTemplate.execute(" INSERT INTO \"kategorija\" (\"kategorija_id\", \"naziv_kategorija\") "
+				//	+ "VALUES (-100, 'Test')");
 		return new ResponseEntity<Kategorija>(HttpStatus.OK);
 	}
 }
