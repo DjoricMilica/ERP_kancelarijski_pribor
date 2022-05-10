@@ -39,7 +39,6 @@ public class AuthenticateRestController {
 				throw new Exception("Incorrect username or password", e);
 			}
 
-
 			final UserDetails userDetails = userDetailsService
 					.loadUserByUsername(authenticationRequest.getUsername());
 

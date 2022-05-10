@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,7 @@ public class ProizvodRestController {
 		return proizvodRepository.getById(id);
 	}
 	
-	
+	@PreAuthorize("hasRole('zaposleni')")
 	@PostMapping("proizvod")
 	public ResponseEntity<Proizvod> postProizvod (@RequestBody Proizvod proizvod){
 		if (!proizvodRepository.existsById(proizvod.getProizvodId())) {
@@ -54,6 +55,7 @@ public class ProizvodRestController {
 		return new ResponseEntity<Proizvod>(HttpStatus.CONFLICT);
 	}
 	
+	@PreAuthorize("hasRole('zaposleni')")
 	@PutMapping("proizvod")
 	public ResponseEntity<Proizvod> putProizvod(@RequestBody Proizvod proizvod) {
 		if (!proizvodRepository.existsById(proizvod.getProizvodId())){
@@ -63,14 +65,12 @@ public class ProizvodRestController {
 		return new ResponseEntity<Proizvod>(HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('zaposleni')")
 	@DeleteMapping("proizvod/{id}")
 	public ResponseEntity<Proizvod> deleteProizvod(@PathVariable("id") Integer id) {
 		if (!proizvodRepository.existsById(id))
 			return new ResponseEntity<Proizvod>(HttpStatus.NO_CONTENT);
 		proizvodRepository.deleteById(id);
-		//if (id == -100)
-			//jdbcTemplate.execute(" INSERT INTO \"kategorija\" (\"kategorija_id\", \"naziv_kategorija\") "
-				//	+ "VALUES (-100, 'Test')");
 		return new ResponseEntity<Proizvod>(HttpStatus.OK);
 	}
 }
